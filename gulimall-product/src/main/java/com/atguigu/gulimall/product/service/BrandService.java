@@ -1,7 +1,7 @@
 package com.atguigu.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.atguigu.common.utils.PageUtils;
+import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.BrandEntity;
 
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @author buelev
  * @email 172319516@qq.com
- * @date 2020-07-01 00:22:56
+ * @date 2020-07-01 22:59:55
  */
 public interface BrandService extends IService<BrandEntity> {
 

@@ -14,3 +14,5 @@ buildNumber.properties
 .idea
 **/.gitignore
 **/gulimall-*.iml
+**/src/main/resources/src/views/modules/**/*.vue
+renren-fast

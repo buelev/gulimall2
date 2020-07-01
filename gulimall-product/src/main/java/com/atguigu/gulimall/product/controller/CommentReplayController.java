@@ -1,14 +1,19 @@
 package com.atguigu.gulimall.product.controller;
 
-import com.atguigu.gulimall.common.utils.PageUtils;
-import com.atguigu.gulimall.common.utils.R;
-import com.atguigu.gulimall.product.entity.CommentReplayEntity;
-import com.atguigu.gulimall.product.service.CommentReplayService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.atguigu.gulimall.product.entity.CommentReplayEntity;
+import com.atguigu.gulimall.product.service.CommentReplayService;
+import com.atguigu.gulimall.common.utils.PageUtils;
+import com.atguigu.gulimall.common.utils.R;
 
 
 
@@ -17,7 +22,7 @@ import java.util.Map;
  *
  * @author buelev
  * @email 172319516@qq.com
- * @date 2020-07-01 00:49:40
+ * @date 2020-07-02 00:05:58
  */
 @RestController
 @RequestMapping("product/commentreplay")
@@ -29,6 +34,7 @@ public class CommentReplayController {
      * 列表
      */
     @RequestMapping("/list")
+    //@RequiresPermissions("product:commentreplay:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = commentReplayService.queryPage(params);
 
@@ -40,8 +46,9 @@ public class CommentReplayController {
      * 信息
      */
     @RequestMapping("/info/{id}")
+    //@RequiresPermissions("product:commentreplay:info")
     public R info(@PathVariable("id") Long id){
-		CommentReplayEntity commentReplay = commentReplayService.getById(id);
+            CommentReplayEntity commentReplay = commentReplayService.getById(id);
 
         return R.ok().put("commentReplay", commentReplay);
     }
@@ -50,8 +57,9 @@ public class CommentReplayController {
      * 保存
      */
     @RequestMapping("/save")
+    //@RequiresPermissions("product:commentreplay:save")
     public R save(@RequestBody CommentReplayEntity commentReplay){
-		commentReplayService.save(commentReplay);
+            commentReplayService.save(commentReplay);
 
         return R.ok();
     }
@@ -60,8 +68,9 @@ public class CommentReplayController {
      * 修改
      */
     @RequestMapping("/update")
+    //@RequiresPermissions("product:commentreplay:update")
     public R update(@RequestBody CommentReplayEntity commentReplay){
-		commentReplayService.updateById(commentReplay);
+            commentReplayService.updateById(commentReplay);
 
         return R.ok();
     }
@@ -70,8 +79,9 @@ public class CommentReplayController {
      * 删除
      */
     @RequestMapping("/delete")
+    //@RequiresPermissions("product:commentreplay:delete")
     public R delete(@RequestBody Long[] ids){
-		commentReplayService.removeByIds(Arrays.asList(ids));
+            commentReplayService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }
