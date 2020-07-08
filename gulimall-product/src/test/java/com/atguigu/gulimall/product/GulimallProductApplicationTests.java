@@ -23,4 +23,19 @@ class GulimallProductApplicationTests {
         brandService.save(entity);
     }
 
+    @Test
+    public void delete() {
+        BrandEntity brandEntity = new BrandEntity();
+        brandEntity.setBrandId(13l);
+        brandService.removeById(13l);
+    }
+
+    @Test
+    public void update() {
+        BrandEntity brandEntity = new BrandEntity();
+        brandEntity.setDescript("mybatis-plus");
+        brandEntity.setBrandId(14l);
+        brandService.updateById(brandEntity);
+    }
+
 }
