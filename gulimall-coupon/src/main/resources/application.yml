@@ -1,0 +1,19 @@
+server:
+  port: 5000
+spring:
+  datasource:
+    username: root
+    password: root123
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://gulimall:3306/gulimall_sms?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+  application:
+    name: gulimall_coupon
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  mapper-locations: classpath*:/mapper/**/*.xml
