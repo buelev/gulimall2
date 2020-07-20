@@ -2,7 +2,8 @@ package com.atguigu.gulimall.coupon;
 
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.coupon.feign.OpenFeigenService;
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
