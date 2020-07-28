@@ -32,7 +32,9 @@ public class CategoryBrandRelationController {
     private CategoryBrandRelationService categoryBrandRelationService;
 
     /**
-     * 列表
+     * 查询所有分类以及子分类，以属性结构组装起来
+     * @param params
+     * @return
      */
     @RequestMapping("/list")
     //@RequiresPermissions("product:categorybrandrelation:list")
