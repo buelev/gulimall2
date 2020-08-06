@@ -77,16 +77,4 @@ public class CategoryBrandRelationController {
 
         return R.ok();
     }
-
-    /**
-     * 删除
-     */
-    @RequestMapping("/delete")
-    //@RequiresPermissions("product:categorybrandrelation:delete")
-    public R delete(@RequestBody Long[] ids){
-            categoryBrandRelationService.removeByIds(Arrays.asList(ids));
-
-        return R.ok();
-    }
-
 }
