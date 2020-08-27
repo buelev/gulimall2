@@ -35,6 +35,7 @@ public class GulimallProductExceptionHandler {
 
     @ExceptionHandler(value = Throwable.class)
     public R exceptionHandler(Throwable t) {
+        log.error("程序异常:{}", t.getMessage());
         return R.error(BizCodeEnume.UNKNOWN_EXCEPTION.getCode(), BizCodeEnume.UNKNOWN_EXCEPTION.getMsg());
     }
 }

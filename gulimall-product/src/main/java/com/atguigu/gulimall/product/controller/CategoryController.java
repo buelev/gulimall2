@@ -25,10 +25,10 @@ public class CategoryController {
      * 查询商品分类数据，以树形结构展示
      * @return
      */
-    @RequestMapping("list")
+    @RequestMapping("list/tree")
     public R list() {
         List<CategoryEntity> entries = categoryService.listWithTree();
-        return R.ok().put("page", entries);
+        return R.ok().put("data", entries);
     }
     /**
      * 删除节点的操作
@@ -56,7 +56,8 @@ public class CategoryController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:categorybrandrelation:update")
     public R update(@RequestBody CategoryEntity categoryEntity){
-        categoryService.updateById(categoryEntity);
+//        categoryService.updateById(categoryEntity);
+        categoryService.updateCategory(categoryEntity);
         return R.ok();
     }
     /**

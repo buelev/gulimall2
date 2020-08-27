@@ -1,5 +1,7 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.atguigu.gulimall.product.entity.CategoryBrandRelationEntity;
+import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -17,9 +19,14 @@ import com.atguigu.gulimall.product.dao.CategoryDao;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
 import com.atguigu.gulimall.product.service.CategoryService;
 
+import javax.annotation.Resource;
+
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Resource
+    private CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -46,6 +53,21 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void removeMenuByIds(List<Long> ids) {
         //TODO 检查当前菜单是否被引用
         baseMapper.deleteBatchIds(ids);
+    }
+
+    @Override
+    public void updateCategory(CategoryEntity categoryEntity) {
+        //更新分类维护
+        this.updateById(categoryEntity);
+        //更新品牌管理中的关联关系
+        //查询关联的地方
+//        categoryBrandRelationService.queryByCategoryId(categoryEntity.getCatId());
+        CategoryBrandRelationEntity entity = new CategoryBrandRelationEntity();
+        entity.setCatelogName(categoryEntity.getName());
+        QueryWrapper<CategoryBrandRelationEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("catelog_id", categoryEntity.getCatId());
+        categoryBrandRelationService.update(entity, wrapper);
+
     }
 
     private CategoryEntity getChildrenList(List<CategoryEntity> entityList, CategoryEntity category) {
