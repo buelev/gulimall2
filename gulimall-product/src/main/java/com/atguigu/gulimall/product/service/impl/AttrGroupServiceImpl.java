@@ -97,7 +97,7 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         return new PageUtils(page);
     }
 
-    private List<Long> findCategoryPath(Long catelogId, List<Long> paths) {
+    protected List<Long> findCategoryPath(Long catelogId, List<Long> paths) {
         CategoryEntity entity = categoryService.getById(catelogId);
         if (entity == null) {
             return paths;

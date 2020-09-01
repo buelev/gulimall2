@@ -13,4 +13,6 @@ import lombok.Data;
 public class AttrEntityVO extends AttrEntity {
     private String groupName;
     private String catelogName;
+    private Long[] catelogPath;
+    private Long attrGroupId;
 }
