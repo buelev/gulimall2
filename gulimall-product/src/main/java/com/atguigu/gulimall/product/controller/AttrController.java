@@ -33,10 +33,12 @@ public class AttrController {
     /**
      * 列表
      */
-    @RequestMapping("base/list/{attrId}")
+    @RequestMapping("{attrType}/list/{catelogId}")
     //@RequiresPermissions("product:attr:list")
-    public R list(@RequestParam Map<String, Object> params, @PathVariable("attrId") Long attrId) {
-        PageUtils page = attrService.queryPage(params, attrId);
+    public R list(@RequestParam Map<String, Object> params,
+                  @PathVariable("attrType") String attrType,
+                  @PathVariable("catelogId") Long catelogId) {
+        PageUtils page = attrService.queryPage(params, catelogId,attrType);
 
         return R.ok().put("page", page);
     }

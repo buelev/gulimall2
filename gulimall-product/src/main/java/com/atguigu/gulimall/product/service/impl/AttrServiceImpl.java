@@ -6,7 +6,6 @@ import com.atguigu.gulimall.product.dao.CategoryDao;
 import com.atguigu.gulimall.product.entity.AttrAttrgroupRelationEntity;
 import com.atguigu.gulimall.product.entity.AttrGroupEntity;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
-import com.atguigu.gulimall.product.service.AttrGroupService;
 import com.atguigu.gulimall.product.vo.AttrEntityVO;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.apache.commons.lang3.StringUtils;
@@ -44,13 +43,18 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params, Long categoryId) {
+    public PageUtils queryPage(Map<String, Object> params, Long categoryId, String attrType) {
         String key = (String) params.get("key");
         QueryWrapper<AttrEntity> wrapper = new QueryWrapper<>();
         if (StringUtils.isNotBlank(key)) {
             wrapper.and(obj -> {
                 obj.eq("attr_id", key).or().like("attr_name", key);
             });
+        }
+        if (StringUtils.equals("base", attrType)) {
+            wrapper.eq("value_type", 0);
+        } else {
+            wrapper.eq("value_type", 1);
         }
         if (categoryId != 0) {
             wrapper.eq("catelog_id", categoryId);
@@ -119,7 +123,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         wrapper.eq("attr_id", attr.getAttrId());
         Integer count = attrAttrgroupRelationDao.selectCount(wrapper);
         if (count > 0) {
-            attrAttrgroupRelationDao.update(relationEntity, new UpdateWrapper<>());
+            attrAttrgroupRelationDao.update(relationEntity, new UpdateWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attr.getAttrId()));
         } else {
             attrAttrgroupRelationDao.insert(relationEntity);
         }
