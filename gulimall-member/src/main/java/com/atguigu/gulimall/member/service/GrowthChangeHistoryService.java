@@ -9,9 +9,9 @@ import java.util.Map;
 /**
  * 成长值变化历史记录
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 01:29:15
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-08 09:47:05
  */
 public interface GrowthChangeHistoryService extends IService<GrowthChangeHistoryEntity> {
 

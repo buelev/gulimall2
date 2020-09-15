@@ -20,9 +20,9 @@ import com.atguigu.gulimall.common.utils.R;
 /**
  * 会员收货地址
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 01:29:15
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-08 09:47:05
  */
 @RestController
 @RequestMapping("member/memberreceiveaddress")
@@ -48,7 +48,7 @@ public class MemberReceiveAddressController {
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("member:memberreceiveaddress:info")
     public R info(@PathVariable("id") Long id){
-            MemberReceiveAddressEntity memberReceiveAddress = memberReceiveAddressService.getById(id);
+		MemberReceiveAddressEntity memberReceiveAddress = memberReceiveAddressService.getById(id);
 
         return R.ok().put("memberReceiveAddress", memberReceiveAddress);
     }
@@ -59,7 +59,7 @@ public class MemberReceiveAddressController {
     @RequestMapping("/save")
     //@RequiresPermissions("member:memberreceiveaddress:save")
     public R save(@RequestBody MemberReceiveAddressEntity memberReceiveAddress){
-            memberReceiveAddressService.save(memberReceiveAddress);
+		memberReceiveAddressService.save(memberReceiveAddress);
 
         return R.ok();
     }
@@ -70,7 +70,7 @@ public class MemberReceiveAddressController {
     @RequestMapping("/update")
     //@RequiresPermissions("member:memberreceiveaddress:update")
     public R update(@RequestBody MemberReceiveAddressEntity memberReceiveAddress){
-            memberReceiveAddressService.updateById(memberReceiveAddress);
+		memberReceiveAddressService.updateById(memberReceiveAddress);
 
         return R.ok();
     }
@@ -81,7 +81,7 @@ public class MemberReceiveAddressController {
     @RequestMapping("/delete")
     //@RequiresPermissions("member:memberreceiveaddress:delete")
     public R delete(@RequestBody Long[] ids){
-            memberReceiveAddressService.removeByIds(Arrays.asList(ids));
+		memberReceiveAddressService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

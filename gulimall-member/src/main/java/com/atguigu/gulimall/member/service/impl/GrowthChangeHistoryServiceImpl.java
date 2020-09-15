@@ -1,14 +1,13 @@
 package com.atguigu.gulimall.member.service.impl;
 
+import com.atguigu.gulimall.common.utils.Query;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gulimall.common.utils.PageUtils;
-import com.atguigu.gulimall.common.utils.Query;
-
-import com.atguigu.gulimall.member.dao.GrowthChangeHistoryDao;
+import com.atguigu.gulimall.common.utils.R;import com.atguigu.gulimall.member.dao.GrowthChangeHistoryDao;
 import com.atguigu.gulimall.member.entity.GrowthChangeHistoryEntity;
 import com.atguigu.gulimall.member.service.GrowthChangeHistoryService;
 

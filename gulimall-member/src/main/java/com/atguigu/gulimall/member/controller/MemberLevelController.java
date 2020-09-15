@@ -20,9 +20,9 @@ import com.atguigu.gulimall.common.utils.R;
 /**
  * 会员等级
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 01:29:15
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-08 09:47:05
  */
 @RestController
 @RequestMapping("member/memberlevel")
@@ -48,7 +48,7 @@ public class MemberLevelController {
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("member:memberlevel:info")
     public R info(@PathVariable("id") Long id){
-            MemberLevelEntity memberLevel = memberLevelService.getById(id);
+		MemberLevelEntity memberLevel = memberLevelService.getById(id);
 
         return R.ok().put("memberLevel", memberLevel);
     }
@@ -59,7 +59,7 @@ public class MemberLevelController {
     @RequestMapping("/save")
     //@RequiresPermissions("member:memberlevel:save")
     public R save(@RequestBody MemberLevelEntity memberLevel){
-            memberLevelService.save(memberLevel);
+		memberLevelService.save(memberLevel);
 
         return R.ok();
     }
@@ -70,7 +70,7 @@ public class MemberLevelController {
     @RequestMapping("/update")
     //@RequiresPermissions("member:memberlevel:update")
     public R update(@RequestBody MemberLevelEntity memberLevel){
-            memberLevelService.updateById(memberLevel);
+		memberLevelService.updateById(memberLevel);
 
         return R.ok();
     }
@@ -81,7 +81,7 @@ public class MemberLevelController {
     @RequestMapping("/delete")
     //@RequiresPermissions("member:memberlevel:delete")
     public R delete(@RequestBody Long[] ids){
-            memberLevelService.removeByIds(Arrays.asList(ids));
+		memberLevelService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

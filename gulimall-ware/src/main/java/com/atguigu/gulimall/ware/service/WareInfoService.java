@@ -9,9 +9,9 @@ import java.util.Map;
 /**
  * 仓库信息
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 01:26:30
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-08 09:59:40
  */
 public interface WareInfoService extends IService<WareInfoEntity> {
 

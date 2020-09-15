@@ -12,17 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SkuImagesEntity;
 import com.atguigu.gulimall.product.service.SkuImagesService;
-import com.atguigu.gulimall.common.utils.PageUtils;
-import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.common.utils.PageUtils;import com.atguigu.gulimall.common.utils.R;
 
 
 
 /**
  * sku图片
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 00:05:58
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-01 22:50:32
  */
 @RestController
 @RequestMapping("product/skuimages")
@@ -48,7 +47,7 @@ public class SkuImagesController {
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("product:skuimages:info")
     public R info(@PathVariable("id") Long id){
-            SkuImagesEntity skuImages = skuImagesService.getById(id);
+		SkuImagesEntity skuImages = skuImagesService.getById(id);
 
         return R.ok().put("skuImages", skuImages);
     }
@@ -59,7 +58,7 @@ public class SkuImagesController {
     @RequestMapping("/save")
     //@RequiresPermissions("product:skuimages:save")
     public R save(@RequestBody SkuImagesEntity skuImages){
-            skuImagesService.save(skuImages);
+		skuImagesService.save(skuImages);
 
         return R.ok();
     }
@@ -70,7 +69,7 @@ public class SkuImagesController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:skuimages:update")
     public R update(@RequestBody SkuImagesEntity skuImages){
-            skuImagesService.updateById(skuImages);
+		skuImagesService.updateById(skuImages);
 
         return R.ok();
     }
@@ -81,7 +80,7 @@ public class SkuImagesController {
     @RequestMapping("/delete")
     //@RequiresPermissions("product:skuimages:delete")
     public R delete(@RequestBody Long[] ids){
-            skuImagesService.removeByIds(Arrays.asList(ids));
+		skuImagesService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

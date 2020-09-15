@@ -11,9 +11,9 @@ import lombok.Data;
 /**
  * 会员统计信息
  * 
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 01:29:15
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-08 09:47:05
  */
 @Data
 @TableName("ums_member_statistics_info")

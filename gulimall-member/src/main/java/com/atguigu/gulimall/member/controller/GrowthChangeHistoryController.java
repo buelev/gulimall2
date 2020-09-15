@@ -20,9 +20,9 @@ import com.atguigu.gulimall.common.utils.R;
 /**
  * 成长值变化历史记录
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 01:29:15
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-08 09:47:05
  */
 @RestController
 @RequestMapping("member/growthchangehistory")
@@ -48,7 +48,7 @@ public class GrowthChangeHistoryController {
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("member:growthchangehistory:info")
     public R info(@PathVariable("id") Long id){
-            GrowthChangeHistoryEntity growthChangeHistory = growthChangeHistoryService.getById(id);
+		GrowthChangeHistoryEntity growthChangeHistory = growthChangeHistoryService.getById(id);
 
         return R.ok().put("growthChangeHistory", growthChangeHistory);
     }
@@ -59,7 +59,7 @@ public class GrowthChangeHistoryController {
     @RequestMapping("/save")
     //@RequiresPermissions("member:growthchangehistory:save")
     public R save(@RequestBody GrowthChangeHistoryEntity growthChangeHistory){
-            growthChangeHistoryService.save(growthChangeHistory);
+		growthChangeHistoryService.save(growthChangeHistory);
 
         return R.ok();
     }
@@ -70,7 +70,7 @@ public class GrowthChangeHistoryController {
     @RequestMapping("/update")
     //@RequiresPermissions("member:growthchangehistory:update")
     public R update(@RequestBody GrowthChangeHistoryEntity growthChangeHistory){
-            growthChangeHistoryService.updateById(growthChangeHistory);
+		growthChangeHistoryService.updateById(growthChangeHistory);
 
         return R.ok();
     }
@@ -81,7 +81,7 @@ public class GrowthChangeHistoryController {
     @RequestMapping("/delete")
     //@RequiresPermissions("member:growthchangehistory:delete")
     public R delete(@RequestBody Long[] ids){
-            growthChangeHistoryService.removeByIds(Arrays.asList(ids));
+		growthChangeHistoryService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

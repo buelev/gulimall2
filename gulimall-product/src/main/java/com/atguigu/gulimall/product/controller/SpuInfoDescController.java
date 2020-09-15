@@ -12,17 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SpuInfoDescEntity;
 import com.atguigu.gulimall.product.service.SpuInfoDescService;
-import com.atguigu.gulimall.common.utils.PageUtils;
-import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.common.utils.PageUtils;import com.atguigu.gulimall.common.utils.R;
 
 
 
 /**
  * spu信息介绍
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 00:05:58
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-01 22:50:32
  */
 @RestController
 @RequestMapping("product/spuinfodesc")
@@ -48,7 +47,7 @@ public class SpuInfoDescController {
     @RequestMapping("/info/{spuId}")
     //@RequiresPermissions("product:spuinfodesc:info")
     public R info(@PathVariable("spuId") Long spuId){
-            SpuInfoDescEntity spuInfoDesc = spuInfoDescService.getById(spuId);
+		SpuInfoDescEntity spuInfoDesc = spuInfoDescService.getById(spuId);
 
         return R.ok().put("spuInfoDesc", spuInfoDesc);
     }
@@ -59,7 +58,7 @@ public class SpuInfoDescController {
     @RequestMapping("/save")
     //@RequiresPermissions("product:spuinfodesc:save")
     public R save(@RequestBody SpuInfoDescEntity spuInfoDesc){
-            spuInfoDescService.save(spuInfoDesc);
+		spuInfoDescService.save(spuInfoDesc);
 
         return R.ok();
     }
@@ -70,7 +69,7 @@ public class SpuInfoDescController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:spuinfodesc:update")
     public R update(@RequestBody SpuInfoDescEntity spuInfoDesc){
-            spuInfoDescService.updateById(spuInfoDesc);
+		spuInfoDescService.updateById(spuInfoDesc);
 
         return R.ok();
     }
@@ -81,7 +80,7 @@ public class SpuInfoDescController {
     @RequestMapping("/delete")
     //@RequiresPermissions("product:spuinfodesc:delete")
     public R delete(@RequestBody Long[] spuIds){
-            spuInfoDescService.removeByIds(Arrays.asList(spuIds));
+		spuInfoDescService.removeByIds(Arrays.asList(spuIds));
 
         return R.ok();
     }

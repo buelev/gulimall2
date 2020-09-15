@@ -12,17 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SpuCommentEntity;
 import com.atguigu.gulimall.product.service.SpuCommentService;
-import com.atguigu.gulimall.common.utils.PageUtils;
-import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.common.utils.PageUtils;import com.atguigu.gulimall.common.utils.R;
 
 
 
 /**
  * 商品评价
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 00:05:58
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-01 22:50:32
  */
 @RestController
 @RequestMapping("product/spucomment")
@@ -48,7 +47,7 @@ public class SpuCommentController {
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("product:spucomment:info")
     public R info(@PathVariable("id") Long id){
-            SpuCommentEntity spuComment = spuCommentService.getById(id);
+		SpuCommentEntity spuComment = spuCommentService.getById(id);
 
         return R.ok().put("spuComment", spuComment);
     }
@@ -59,7 +58,7 @@ public class SpuCommentController {
     @RequestMapping("/save")
     //@RequiresPermissions("product:spucomment:save")
     public R save(@RequestBody SpuCommentEntity spuComment){
-            spuCommentService.save(spuComment);
+		spuCommentService.save(spuComment);
 
         return R.ok();
     }
@@ -70,7 +69,7 @@ public class SpuCommentController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:spucomment:update")
     public R update(@RequestBody SpuCommentEntity spuComment){
-            spuCommentService.updateById(spuComment);
+		spuCommentService.updateById(spuComment);
 
         return R.ok();
     }
@@ -81,7 +80,7 @@ public class SpuCommentController {
     @RequestMapping("/delete")
     //@RequiresPermissions("product:spucomment:delete")
     public R delete(@RequestBody Long[] ids){
-            spuCommentService.removeByIds(Arrays.asList(ids));
+		spuCommentService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

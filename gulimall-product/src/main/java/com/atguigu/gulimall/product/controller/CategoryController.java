@@ -1,19 +1,28 @@
 package com.atguigu.gulimall.product.controller;
 
-import com.atguigu.gulimall.common.utils.R;
-import com.atguigu.gulimall.product.entity.CategoryEntity;
-import com.atguigu.gulimall.product.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import com.atguigu.gulimall.product.entity.CategoryEntity;
+import com.atguigu.gulimall.product.service.CategoryService;
+import com.atguigu.gulimall.common.utils.PageUtils;import com.atguigu.gulimall.common.utils.R;
+
+import javax.validation.Valid;
+
 
 /**
- * description: CategoryController
- * date: 2020-07-27 16:02
- * author: buelev
- * version: 1.0
+ * 商品三级分类
+ *
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-01 22:50:32
  */
 @RestController
 @RequestMapping("product/category")
@@ -22,31 +31,44 @@ public class CategoryController {
     private CategoryService categoryService;
 
     /**
-     * 查询商品分类数据，以树形结构展示
-     * @return
+     * 查出所有分类以及子分类，以树形结构组装起来
      */
-    @RequestMapping("list/tree")
-    public R list() {
-        List<CategoryEntity> entries = categoryService.listWithTree();
-        return R.ok().put("data", entries);
+    @RequestMapping("/list/tree")
+    public R list(){
+
+        List<CategoryEntity> entities = categoryService.listWithTree();
+
+
+        return R.ok().put("data", entities);
     }
+
+
     /**
-     * 删除节点的操作
+     * 信息
      */
-    @PostMapping("/delete")
-    //@RequiresPermissions("product:categorybrandrelation:delete")
-    public R delete(@RequestBody Long[] ids){
-//        categoryService.removeByIds(Arrays.asList(ids));
-        categoryService.removeMenuByIds(Arrays.asList(ids));
-        return R.ok();
+    @RequestMapping("/info/{catId}")
+    //@RequiresPermissions("product:category:info")
+    public R info(@PathVariable("catId") Long catId){
+		CategoryEntity category = categoryService.getById(catId);
+
+        return R.ok().put("data", category);
     }
+
     /**
      * 保存
      */
     @RequestMapping("/save")
-    //@RequiresPermissions("product:categorybrandrelation:save")
-    public R save(@RequestBody CategoryEntity categoryEntity){
-        categoryService.save(categoryEntity);
+    //@RequiresPermissions("product:category:save")
+    public R save(@RequestBody CategoryEntity category){
+		categoryService.save(category);
+
+        return R.ok();
+    }
+
+    @RequestMapping("/update/sort")
+    //@RequiresPermissions("product:category:update")
+    public R updateSort(@RequestBody CategoryEntity[] category){
+        categoryService.updateBatchById(Arrays.asList(category));
         return R.ok();
     }
 
@@ -54,20 +76,28 @@ public class CategoryController {
      * 修改
      */
     @RequestMapping("/update")
-    //@RequiresPermissions("product:categorybrandrelation:update")
-    public R update(@RequestBody CategoryEntity categoryEntity){
-//        categoryService.updateById(categoryEntity);
-        categoryService.updateCategory(categoryEntity);
+    //@RequiresPermissions("product:category:update")
+    public R update(@RequestBody CategoryEntity category){
+		categoryService.updateCascade(category);
         return R.ok();
     }
-    /**
-     * 信息
-     */
-    @RequestMapping("/info/{id}")
-    //@RequiresPermissions("product:categorybrandrelation:info")
-    public R info(@PathVariable("id") Long id){
-        CategoryEntity categoryEntity = categoryService.getById(id);
 
-        return R.ok().put("data", categoryEntity);
+
+    /**
+     * 删除
+     * @RequestBody:获取请求体，必须发送POST请求
+     * SpringMVC自动将请求体的数据（json），转为对应的对象
+     */
+    @RequestMapping("/delete")
+    //@RequiresPermissions("product:category:delete")
+    public R delete(@RequestBody Long[] catIds){
+
+
+		//categoryService.removeByIds(Arrays.asList(catIds));
+
+        categoryService.removeMenuByIds(Arrays.asList(catIds));
+
+        return R.ok();
     }
+
 }

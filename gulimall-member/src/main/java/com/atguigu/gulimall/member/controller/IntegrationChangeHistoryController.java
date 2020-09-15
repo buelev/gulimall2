@@ -20,9 +20,9 @@ import com.atguigu.gulimall.common.utils.R;
 /**
  * 积分变化历史记录
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-02 01:29:15
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-08 09:47:05
  */
 @RestController
 @RequestMapping("member/integrationchangehistory")
@@ -48,7 +48,7 @@ public class IntegrationChangeHistoryController {
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("member:integrationchangehistory:info")
     public R info(@PathVariable("id") Long id){
-            IntegrationChangeHistoryEntity integrationChangeHistory = integrationChangeHistoryService.getById(id);
+		IntegrationChangeHistoryEntity integrationChangeHistory = integrationChangeHistoryService.getById(id);
 
         return R.ok().put("integrationChangeHistory", integrationChangeHistory);
     }
@@ -59,7 +59,7 @@ public class IntegrationChangeHistoryController {
     @RequestMapping("/save")
     //@RequiresPermissions("member:integrationchangehistory:save")
     public R save(@RequestBody IntegrationChangeHistoryEntity integrationChangeHistory){
-            integrationChangeHistoryService.save(integrationChangeHistory);
+		integrationChangeHistoryService.save(integrationChangeHistory);
 
         return R.ok();
     }
@@ -70,7 +70,7 @@ public class IntegrationChangeHistoryController {
     @RequestMapping("/update")
     //@RequiresPermissions("member:integrationchangehistory:update")
     public R update(@RequestBody IntegrationChangeHistoryEntity integrationChangeHistory){
-            integrationChangeHistoryService.updateById(integrationChangeHistory);
+		integrationChangeHistoryService.updateById(integrationChangeHistory);
 
         return R.ok();
     }
@@ -81,7 +81,7 @@ public class IntegrationChangeHistoryController {
     @RequestMapping("/delete")
     //@RequiresPermissions("member:integrationchangehistory:delete")
     public R delete(@RequestBody Long[] ids){
-            integrationChangeHistoryService.removeByIds(Arrays.asList(ids));
+		integrationChangeHistoryService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

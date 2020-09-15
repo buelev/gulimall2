@@ -1,10 +1,11 @@
 package com.atguigu.gulimall.product.service.impl;
 
-import com.atguigu.gulimall.product.entity.CategoryBrandRelationEntity;
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,21 +13,20 @@ import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.atguigu.gulimall.common.utils.PageUtils;
-import com.atguigu.gulimall.common.utils.Query;
-
-import com.atguigu.gulimall.product.dao.CategoryDao;
+import com.atguigu.gulimall.common.utils.PageUtils;import com.atguigu.gulimall.common.utils.Query;import com.atguigu.gulimall.product.dao.CategoryDao;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
 import com.atguigu.gulimall.product.service.CategoryService;
-
-import javax.annotation.Resource;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
-    @Resource
-    private CategoryBrandRelationService categoryBrandRelationService;
+//    @Autowired
+//    CategoryDao categoryDao;
+
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -40,45 +40,88 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public List<CategoryEntity> listWithTree() {
-        List<CategoryEntity> entityList = baseMapper.selectList(null);
-        //查询一级目录
-        List<CategoryEntity> entities = entityList.stream().filter(categoryEntity -> categoryEntity.getParentCid() == 0)
-                .map(category -> {
-                    return getChildrenList(entityList, category);
-                }).collect(Collectors.toList());
-        return entities;
+        //1、查出所有分类
+        List<CategoryEntity> entities = baseMapper.selectList(null);
+
+        //2、组装成父子的树形结构
+
+        //2.1）、找到所有的一级分类
+        List<CategoryEntity> level1Menus = entities.stream().filter(categoryEntity ->
+             categoryEntity.getParentCid() == 0
+        ).map((menu)->{
+            menu.setChildren(getChildrens(menu,entities));
+            return menu;
+        }).sorted((menu1,menu2)->{
+            return (menu1.getSort()==null?0:menu1.getSort()) - (menu2.getSort()==null?0:menu2.getSort());
+        }).collect(Collectors.toList());
+
+
+
+
+        return level1Menus;
     }
 
     @Override
-    public void removeMenuByIds(List<Long> ids) {
-        //TODO 检查当前菜单是否被引用
-        baseMapper.deleteBatchIds(ids);
+    public void removeMenuByIds(List<Long> asList) {
+        //TODO  1、检查当前删除的菜单，是否被别的地方引用
+
+        //逻辑删除
+        baseMapper.deleteBatchIds(asList);
     }
 
+    //[2,25,225]
     @Override
-    public void updateCategory(CategoryEntity categoryEntity) {
-        //更新分类维护
-        this.updateById(categoryEntity);
-        //更新品牌管理中的关联关系
-        //查询关联的地方
-//        categoryBrandRelationService.queryByCategoryId(categoryEntity.getCatId());
-        CategoryBrandRelationEntity entity = new CategoryBrandRelationEntity();
-        entity.setCatelogName(categoryEntity.getName());
-        QueryWrapper<CategoryBrandRelationEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("catelog_id", categoryEntity.getCatId());
-        categoryBrandRelationService.update(entity, wrapper);
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> paths = new ArrayList<>();
+        List<Long> parentPath = findParentPath(catelogId, paths);
+
+        Collections.reverse(parentPath);
+
+
+        return parentPath.toArray(new Long[parentPath.size()]);
+    }
+
+    /**
+     * 级联更新所有关联的数据
+     * @param category
+     */
+    @Transactional
+    @Override
+    public void updateCascade(CategoryEntity category) {
+        this.updateById(category);
+        categoryBrandRelationService.updateCategory(category.getCatId(),category.getName());
+    }
+
+    //225,25,2
+    private List<Long> findParentPath(Long catelogId,List<Long> paths){
+        //1、收集当前节点id
+        paths.add(catelogId);
+        CategoryEntity byId = this.getById(catelogId);
+        if(byId.getParentCid()!=0){
+            findParentPath(byId.getParentCid(),paths);
+        }
+        return paths;
 
     }
 
-    private CategoryEntity getChildrenList(List<CategoryEntity> entityList, CategoryEntity category) {
-        //查询一级目录下的二级目录
-        List<CategoryEntity> secList = entityList.stream().filter(categoryEntity -> category.getCatId() == categoryEntity.getParentCid())
-                .map(secCategory -> getChildrenList(entityList, secCategory))
-                .sorted((category1, category2) -> {
-                    return category1.getSort() - category2.getSort();
-                })
-                .collect(Collectors.toList());
-        category.setChildrenList(secList);
-        return category;
+
+    //递归查找所有菜单的子菜单
+    private List<CategoryEntity> getChildrens(CategoryEntity root,List<CategoryEntity> all){
+
+        List<CategoryEntity> children = all.stream().filter(categoryEntity -> {
+            return categoryEntity.getParentCid() == root.getCatId();
+        }).map(categoryEntity -> {
+            //1、找到子菜单
+            categoryEntity.setChildren(getChildrens(categoryEntity,all));
+            return categoryEntity;
+        }).sorted((menu1,menu2)->{
+            //2、菜单的排序
+            return (menu1.getSort()==null?0:menu1.getSort()) - (menu2.getSort()==null?0:menu2.getSort());
+        }).collect(Collectors.toList());
+
+        return children;
     }
+
+
+
 }

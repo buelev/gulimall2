@@ -1,7 +1,7 @@
 package com.atguigu.gulimall.product.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
 
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * 商品三级分类
  *
- * @author buelev
- * @email 172319516@qq.com
- * @date 2020-07-01 22:59:55
+ * @author leifengyang
+ * @email leifengyang@gmail.com
+ * @date 2019-10-01 21:08:48
  */
 public interface CategoryService extends IService<CategoryEntity> {
 
@@ -20,16 +20,18 @@ public interface CategoryService extends IService<CategoryEntity> {
 
     List<CategoryEntity> listWithTree();
 
-    /**
-     * 根据id删除商品分类数据
-     * @param asList
-     */
     void removeMenuByIds(List<Long> asList);
 
+
     /**
-     * 更新分类维护
-     * @param categoryEntity
+     * 找到catelogId的完整路径；
+     * [父/子/孙]
+     * @param catelogId
+     * @return
      */
-    void updateCategory(CategoryEntity categoryEntity);
+    Long[] findCatelogPath(Long catelogId);
+
+    void updateCascade(CategoryEntity category);
+
 }
 
