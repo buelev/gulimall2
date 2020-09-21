@@ -3,16 +3,19 @@ package com.atguigu.gulimall.ware.service.impl;
 import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.ware.feign.ProductFeignService;
+import com.atguigu.gulimall.ware.to.SkuHasStock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gulimall.common.utils.PageUtils;
-import com.atguigu.gulimall.common.utils.R;import com.atguigu.gulimall.ware.dao.WareSkuDao;
+import com.atguigu.gulimall.ware.dao.WareSkuDao;
 import com.atguigu.gulimall.ware.entity.WareSkuEntity;
 import com.atguigu.gulimall.ware.service.WareSkuService;
 import org.springframework.util.StringUtils;
@@ -35,13 +38,13 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
          */
         QueryWrapper<WareSkuEntity> queryWrapper = new QueryWrapper<>();
         String skuId = (String) params.get("skuId");
-        if(!StringUtils.isEmpty(skuId)){
-            queryWrapper.eq("sku_id",skuId);
+        if (!StringUtils.isEmpty(skuId)) {
+            queryWrapper.eq("sku_id", skuId);
         }
 
         String wareId = (String) params.get("wareId");
-        if(!StringUtils.isEmpty(wareId)){
-            queryWrapper.eq("ware_id",wareId);
+        if (!StringUtils.isEmpty(wareId)) {
+            queryWrapper.eq("ware_id", wareId);
         }
 
 
@@ -57,7 +60,7 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
     public void addStock(Long skuId, Long wareId, Integer skuNum) {
         //1、判断如果还没有这个库存记录新增
         List<WareSkuEntity> entities = wareSkuDao.selectList(new QueryWrapper<WareSkuEntity>().eq("sku_id", skuId).eq("ware_id", wareId));
-        if(entities == null || entities.size() == 0){
+        if (entities == null || entities.size() == 0) {
             WareSkuEntity skuEntity = new WareSkuEntity();
             skuEntity.setSkuId(skuId);
             skuEntity.setStock(skuNum);
@@ -68,21 +71,39 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
             //TODO 还可以用什么办法让异常出现以后不回滚？高级
             try {
                 R info = productFeignService.info(skuId);
-                Map<String,Object> data = (Map<String, Object>) info.get("skuInfo");
+                Map<String, Object> data = (Map<String, Object>) info.get("skuInfo");
 
-                if(info.getCode() == 0){
+                if (info.getCode() == 0) {
                     skuEntity.setSkuName((String) data.get("skuName"));
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
 
             wareSkuDao.insert(skuEntity);
-        }else{
-            wareSkuDao.addStock(skuId,wareId,skuNum);
+        } else {
+            wareSkuDao.addStock(skuId, wareId, skuNum);
         }
 
     }
 
+    /**
+     * 根据skuId查询是否还有库存
+     *
+     * @param skuIds
+     * @return
+     */
+    @Override
+    public List<SkuHasStock> hasStock(List<Long> skuIds) {
+        List<SkuHasStock> hasStockList = skuIds.stream().map(skuId -> {
+            Long count = this.baseMapper.getSkuStock(skuId);
+            SkuHasStock skuHasStock = SkuHasStock.builder()
+                    .hasStock(count == null ? false : count > 0)
+                    .skuId(skuId)
+                    .build();
+            return skuHasStock;
+        }).collect(Collectors.toList());
+        return hasStockList;
+    }
 }
