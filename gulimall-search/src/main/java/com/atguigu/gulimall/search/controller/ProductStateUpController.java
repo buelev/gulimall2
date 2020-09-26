@@ -32,7 +32,7 @@ public class ProductStateUpController {
         } catch (IOException e) {
             log.error("商品上架出错,异常信息为:{}", e);
         }
-        if (success) {
+        if (!success) {
             return R.ok();
         }
         return R.error(BizCodeEnume.PRODUCT_UP_EXCEPTION.getCode(), BizCodeEnume.PRODUCT_UP_EXCEPTION.getMsg());

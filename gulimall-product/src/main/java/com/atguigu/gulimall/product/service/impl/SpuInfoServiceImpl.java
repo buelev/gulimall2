@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
 import com.atguigu.gulimall.common.to.SkuReductionTo;
 import com.atguigu.gulimall.common.to.SpuBoundTo;
 import com.atguigu.gulimall.common.to.es.SkuEsModel;
@@ -75,6 +76,8 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     private WareFeignService wareFeignService;
     @Resource
     private SearchFeignService searchFeignService;
+    @Resource
+    private SpuInfoDao spuInfoDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -274,8 +277,10 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         //根据skuId查询出是否有库存
         List<Long> skuLists = skuInfoEntityList.stream().map(skuInfoEntity -> skuInfoEntity.getSkuId()).collect(Collectors.toList());
-        R<List<SkuHasStock>> hasStockR = wareFeignService.hasStock(skuLists);
-        List<SkuHasStock> hasStockRData = hasStockR.getData();
+        R hasStockR = wareFeignService.hasStock(skuLists);
+        TypeReference<List<SkuHasStock>> reference = new TypeReference<List<SkuHasStock>>() {
+        };
+        List<SkuHasStock> hasStockRData = hasStockR.getData(reference);
         Map<Long, Boolean> hasStockMap = hasStockRData.stream().collect(Collectors.toMap(SkuHasStock::getSkuId, item -> item.getHasStock()));
         //封装每个SkuEsModel信息
         List<SkuEsModel> esModels = skuInfoEntityList.stream().map(skuInfoEntity -> {
@@ -316,6 +321,14 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         }).collect(Collectors.toList());
         //调用es服务保存数据
         R r = searchFeignService.productStateUp(esModels);
+        if (r.getCode() == 0) {
+            //更新SPU的状态
+            SpuInfoEntity spuInfoEntity = new SpuInfoEntity();
+            spuInfoEntity.setId(spuId);
+            spuInfoEntity.setPublishStatus(1);
+            spuInfoEntity.setUpdateTime(new Date());
+            spuInfoDao.updateById(spuInfoEntity);
+        }
     }
 
 }

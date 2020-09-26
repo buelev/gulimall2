@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.service;
 
 import com.atguigu.gulimall.common.utils.PageUtils;
+import com.atguigu.gulimall.product.vo.IndexCategoryVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.product.entity.CategoryEntity;
 
@@ -32,6 +33,18 @@ public interface CategoryService extends IService<CategoryEntity> {
     Long[] findCatelogPath(Long catelogId);
 
     void updateCascade(CategoryEntity category);
+
+    /**
+     * 一级类目的
+     * @return
+     */
+    List<CategoryEntity> indexCategory();
+
+    /**
+     * 查询二级和三级分类数据
+     * @return
+     */
+    Map<String, List<IndexCategoryVO>> getSecondCategoryJson();
 
 }
 

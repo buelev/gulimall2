@@ -8,6 +8,10 @@
 
 package com.atguigu.gulimall.common.utils;
 
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import lombok.ToString;
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
@@ -18,17 +22,23 @@ import java.util.Map;
  *
  * @author Mark sunlightcs@gmail.com
  */
-public class R<T> extends HashMap<String, Object> {
+@ToString
+public class R extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;
 
-    private T data;
+    public <T> T getData(TypeReference<T> reference) {
+        Object data = get("data");
+        //装维json字符串
+        String dataString = JSON.toJSONString(data);
+        //将字符串转为指定的对象
+        T t = JSON.parseObject(dataString, reference);
+        return t;
 
-    public T getData() {
-        return data;
     }
 
-    public void setData(T data) {
-        this.data = data;
+    public R setData(Object data) {
+        put("data", data);
+        return this;
     }
 
     public R() {

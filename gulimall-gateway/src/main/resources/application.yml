@@ -36,4 +36,9 @@ spring:
             - Path=/api/**
           filters:
             - RewritePath=/api/(?<segment>.*),/renren-fast/$\{segment}
+
+        - id: guliamll_host_route
+          uri: lb://gulimall-product
+          predicates:
+            - Host=**.gulimall.com
 ## localhost:88/renren-fast/product/category/list localhost:8080/renren-fast/category/list

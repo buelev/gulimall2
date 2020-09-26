@@ -1,8 +1,6 @@
 package com.atguigu.gulimall.product.to;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * description: SkuHasStock
@@ -13,6 +11,8 @@ import lombok.ToString;
 @Data
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class SkuHasStock {
     private Long skuId;
     private Boolean hasStock;

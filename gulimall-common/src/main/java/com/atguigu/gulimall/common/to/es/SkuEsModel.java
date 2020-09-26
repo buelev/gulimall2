@@ -37,6 +37,7 @@ public class SkuEsModel {
     @Builder
     @ToString
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class Attrs {
         private Long attrId;
         private String attrName;
