@@ -870,7 +870,7 @@ function log(){
   log.history = log.history || [];
   log.history.push(arguments);
   if(this.console){
-    console.log( Array.prototype.slice.call(arguments)[0] );
+    // console.log( Array.prototype.slice.call(arguments)[0] );
   }
 }
 
@@ -4892,7 +4892,7 @@ Resolver.prototype.resolve = function (spec, arg1, arg2, arg3) {
           on: {
             error: function (error) {
               processedCalls += 1;
-              console.log('failed url: ' + obj.url);
+              // console.log('failed url: ' + obj.url);
               self.failedUrls.push(obj.url);
               if (lock) {
                 delete lock[item.root];

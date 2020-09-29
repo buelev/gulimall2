@@ -1,8 +1,6 @@
 package com.atguigu.gulimall.product.vo;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -16,6 +14,8 @@ import java.util.List;
 @Data
 @Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class IndexCategoryVO {
     private String catalog1Id;
     private String id;
@@ -25,6 +25,8 @@ public class IndexCategoryVO {
     @Data
     @Builder
     @ToString
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Catalog3VO {
         private String catalog2Id;
         private String id;

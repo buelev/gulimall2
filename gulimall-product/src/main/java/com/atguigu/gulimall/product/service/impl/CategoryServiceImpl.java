@@ -1,10 +1,13 @@
 package com.atguigu.gulimall.product.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
 import com.atguigu.gulimall.product.vo.IndexCategoryVO;
 import net.sf.jsqlparser.statement.create.table.Index;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -29,6 +32,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     CategoryBrandRelationService categoryBrandRelationService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -101,6 +107,23 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public Map<String, List<IndexCategoryVO>> getSecondCategoryJson() {
+        //首先从缓存中加载数据
+        String key = "gulimall.product.index.catalog2.data";
+        String catalogJsonString = (String) redisTemplate.opsForValue().get(key);
+        if (StringUtils.isBlank(catalogJsonString)) {
+            //从数据库中查询加载数据
+            Map<String, List<IndexCategoryVO>> catalogFromDB = getCatalogFromDB();
+            //将数据保存到缓存中
+            redisTemplate.opsForValue().set(key, JSON.toJSONString(catalogFromDB));
+            return catalogFromDB;
+        }
+        //将json数据转为map
+        Map<String, List<IndexCategoryVO>> map = JSON.parseObject(catalogJsonString, new TypeReference<Map<String, List<IndexCategoryVO>>>() {
+        });
+        return map;
+    }
+
+    private Map<String, List<IndexCategoryVO>> getCatalogFromDB() {
         //查询所有分类数据
         List<CategoryEntity> entities = this.listWithTree();
         Map<String, List<IndexCategoryVO>> vo = new HashMap<>();
@@ -124,7 +147,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             }).collect(Collectors.toList());
             vo.put(entity.getCatId().toString(), list);
         });
-        String string = JSON.toJSONString(entities);
         return vo;
     }
 

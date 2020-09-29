@@ -1,20 +1,27 @@
 package com.atguigu.gulimall.product;
 
+import com.alibaba.fastjson.JSON;
 import com.atguigu.gulimall.product.entity.BrandEntity;
 import com.atguigu.gulimall.product.service.BrandService;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest
-class GulimallProductApplicationTests {
+@RunWith(SpringRunner.class)
+public class GulimallProductApplicationTests {
 
     @Test
-    void contextLoads() {
+    public void contextLoads() {
     }
 
     @Autowired
     private BrandService brandService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Test
     public void save() {
@@ -36,6 +43,11 @@ class GulimallProductApplicationTests {
         brandEntity.setDescript("mybatis-plus");
         brandEntity.setBrandId(14l);
         brandService.updateById(brandEntity);
+    }
+
+    @Test
+    public void redisTest() {
+        redisTemplate.opsForValue().set(12, JSON.toJSONString(12));
     }
 
 }
