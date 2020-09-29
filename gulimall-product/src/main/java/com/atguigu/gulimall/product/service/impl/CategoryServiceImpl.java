@@ -2,15 +2,20 @@ package com.atguigu.gulimall.product.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.nacos.common.util.UuidUtils;
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
 import com.atguigu.gulimall.product.vo.IndexCategoryVO;
 import net.sf.jsqlparser.statement.create.table.Index;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -105,22 +110,49 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return this.baseMapper.selectList(wrapper);
     }
 
+    /**
+     * 缓存穿透 雪崩 击穿
+     *
+     * @return
+     */
     @Override
     public Map<String, List<IndexCategoryVO>> getSecondCategoryJson() {
         //首先从缓存中加载数据
         String key = "gulimall.product.index.catalog2.data";
         String catalogJsonString = (String) redisTemplate.opsForValue().get(key);
-        if (StringUtils.isBlank(catalogJsonString)) {
-            //从数据库中查询加载数据
-            Map<String, List<IndexCategoryVO>> catalogFromDB = getCatalogFromDB();
-            //将数据保存到缓存中
-            redisTemplate.opsForValue().set(key, JSON.toJSONString(catalogFromDB));
-            return catalogFromDB;
+        if (StringUtils.isNotBlank(catalogJsonString)) {
+            System.out.println("击中缓存中的数据.....");
+            //将json数据转为map
+            Map<String, List<IndexCategoryVO>> map = JSON.parseObject(catalogJsonString, new TypeReference<Map<String, List<IndexCategoryVO>>>() {
+            });
+            return map;
         }
-        //将json数据转为map
-        Map<String, List<IndexCategoryVO>> map = JSON.parseObject(catalogJsonString, new TypeReference<Map<String, List<IndexCategoryVO>>>() {
-        });
-        return map;
+        //首先加锁，保证redis分布式锁的原子性
+        String uuid = UuidUtils.generateUuid();
+        Boolean lock = redisTemplate.opsForValue().setIfAbsent("gulimall.product.index.lock", uuid, 300, TimeUnit.SECONDS);
+        if (lock) {
+            //从数据库中查询加载数据
+            Map<String, List<IndexCategoryVO>> catalogFromDB;
+            try {
+                System.out.println("查询数据库.....");
+                catalogFromDB = getCatalogFromDB();
+                //将数据保存到缓存中
+                redisTemplate.opsForValue().set(key, JSON.toJSONString(catalogFromDB));
+            } finally {
+                String script = "if redis.call(\"get\",KEYS[1]) == ARGV[1]\n" +
+                        "then\n" +
+                        "    return redis.call(\"del\",KEYS[1])\n" +
+                        "else\n" +
+                        "    return 0\n" +
+                        "end";
+                redisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class), Arrays.asList("gulimall.product.index.lock"), uuid);
+            }
+            return catalogFromDB;
+        } else {
+            //锁被抢占，后面的其他线层重试，尝试获取分布式锁
+            System.out.println("自旋锁重试获取分布式锁....");
+            return getSecondCategoryJson();
+        }
     }
 
     private Map<String, List<IndexCategoryVO>> getCatalogFromDB() {
