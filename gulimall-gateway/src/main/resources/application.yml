@@ -40,5 +40,10 @@ spring:
         - id: guliamll_host_route
           uri: lb://gulimall-product
           predicates:
-            - Host=**.gulimall.com
+            - Host=product.gulimall.com
+
+        - id: gulimall_search_route
+          uri: lb://gulimall-search
+          predicates:
+            - Host=search.gulimall.com
 ## localhost:88/renren-fast/product/category/list localhost:8080/renren-fast/category/list
