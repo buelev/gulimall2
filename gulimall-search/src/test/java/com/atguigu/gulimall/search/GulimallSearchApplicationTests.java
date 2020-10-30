@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.atguigu.gulimall.search.config.ElasticSearchConfig;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.Encoder;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -34,11 +37,27 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import javax.naming.directory.SearchResult;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
+@Slf4j
 public class GulimallSearchApplicationTests {
+
+    @Test
+    public void testMD2() {
+        String value = "0x31";
+        for (int i = 0; i < 100000000; i++) {
+        }
+        System.out.println(value);
+        log.info(value);
+    }
+
+    @Test
+    public void testC() {
+        System.out.println("da59e52887eb3782c71135fdd589f2d2".toUpperCase());
+    }
 
     @Data
     @Builder
