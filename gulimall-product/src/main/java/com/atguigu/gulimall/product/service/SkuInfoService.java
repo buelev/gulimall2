@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product.service;
 
+import com.atguigu.gulimall.product.vo.SkuItemVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;import com.atguigu.gulimall.product.entity.SkuInfoEntity;
 
@@ -20,6 +21,11 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
 
     PageUtils queryPageByCondition(Map<String, Object> params);
 
-
+    /**
+     * 查询商品详情信息
+     * @param skuId
+     * @return
+     */
+    SkuItemVO queryItem(Long skuId);
 }
 

@@ -3,7 +3,7 @@
 
 <mapper namespace="com.atguigu.gulimall.product.dao.SkuInfoDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.atguigu.gulimall.product.entity.SkuInfoEntity" id="skuInfoMap">
         <result property="skuId" column="sku_id"/>
         <result property="spuId" column="spu_id"/>
@@ -17,6 +17,25 @@
         <result property="price" column="price"/>
         <result property="saleCount" column="sale_count"/>
     </resultMap>
+
+    <resultMap id="skuItemSaleAttrVo" type="com.atguigu.gulimall.product.vo.SkuItemVO$SpuSaleAttrGroupVo">
+        <result property="groupName" column="attr_group_name"/>
+        <collection property="spuSaleAttr" ofType="com.atguigu.gulimall.product.vo.SkuItemVO$SpuSaleAttr">
+            <result property="attrName" column="attr_name"/>
+            <result property="attrValue" column="attr_value"/>
+        </collection>
+    </resultMap>
+    <select id="querySpuSaleAttrGroupVO"
+            resultMap="skuItemSaleAttrVo">
+        select
+            a.attr_group_name,
+            c.attr_name,
+            c.attr_value
+            from pms_attr_group a
+            left join pms_attr_attrgroup_relation b on a.attr_group_id = b.attr_group_id
+            left join pms_product_attr_value c on b.attr_id = c.attr_id
+        where a.catelog_id = #{catalogId} and c.spu_id = #{spuId};
+    </select>
 
 
 </mapper>

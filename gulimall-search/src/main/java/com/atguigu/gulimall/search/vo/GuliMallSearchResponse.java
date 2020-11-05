@@ -3,6 +3,7 @@ package com.atguigu.gulimall.search.vo;
 import com.atguigu.gulimall.common.to.es.SkuEsModel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @Data
 @Builder
+@ToString
 public class GuliMallSearchResponse {
     //查询的所有的商品的信息
     private List<SkuEsModel> products;
@@ -33,10 +35,11 @@ public class GuliMallSearchResponse {
     }
 
     @Data
+    @Builder
     public static class Attrs {
         private Long attrId;
         private String attrName;
-        private String attrValue;
+        private List<String> attrValue;
     }
 
     @Data

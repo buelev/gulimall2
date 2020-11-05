@@ -19,6 +19,11 @@ public interface SpuInfoDescService extends IService<SpuInfoDescEntity> {
 
     void saveSpuInfoDesc(SpuInfoDescEntity descEntity);
 
-
+    /**
+     * 查询spu的介绍
+     * @param spuId
+     * @return
+     */
+    SpuInfoDescEntity QuerySpuDesc(Long spuId);
 }
 

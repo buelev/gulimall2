@@ -1,31 +1,21 @@
 package com.atguigu.gulimall.search.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.atguigu.gulimall.common.constant.ESConstant;
 import com.atguigu.gulimall.common.to.es.SkuEsModel;
-import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.search.config.ElasticSearchConfig;
 import com.atguigu.gulimall.search.service.MallSearchService;
 import com.atguigu.gulimall.search.vo.GuliMallSearchResponse;
 import com.atguigu.gulimall.search.vo.SearchParam;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.search.TotalHits;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.PipelineAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.nested.ParsedNested;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedLongTerms;
@@ -40,7 +30,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,13 +47,15 @@ public class MallSearchServiceImpl implements MallSearchService {
     @Override
     public GuliMallSearchResponse search(SearchParam searchParam) {
         SearchRequest request = bulidSearchRequest(searchParam);
+        GuliMallSearchResponse response = null;
         try {
             SearchResponse result = client.search(request, ElasticSearchConfig.COMMON_OPTIONS);
-            GuliMallSearchResponse response = buildSearchReponse(result, searchParam);
+            response = buildSearchReponse(result, searchParam);
+            System.out.println(JSON.toJSONString(response));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return response;
     }
 
     /**
@@ -78,12 +69,19 @@ public class MallSearchServiceImpl implements MallSearchService {
         //构建商品的数据
         SearchHit[] hits = result.getHits().getHits();
         List<SkuEsModel> productList = new ArrayList<>();
-        for (SearchHit hit : hits) {
-            String productJson = hit.getSourceAsString();
-            SkuEsModel skuEsModel = JSON.parseObject(productJson, SkuEsModel.class);
-            productList.add(skuEsModel);
+        if (Objects.nonNull(hits) && hits.length > 0) {
+            for (SearchHit hit : hits) {
+                String productJson = hit.getSourceAsString();
+                SkuEsModel skuEsModel = JSON.parseObject(productJson, SkuEsModel.class);
+                //使用高亮结果替换skuTitle
+                if(Objects.nonNull(searchParam.getKeyword())){
+                    String skuTitle = hit.getHighlightFields().get("skuTitle").getFragments()[0].string();
+                    skuEsModel.setSkuTitle(skuTitle);
+                }
+                productList.add(skuEsModel);
+            }
+            response.setProducts(productList);
         }
-        response.setProducts(productList);
         //分页信息 11/2 5+1
         long total = result.getHits().getTotalHits().value;//总记录数
         int totalPage = total / ESConstant.PRODUCT_PAGESIZE == 0 ? (int) total / ESConstant.PRODUCT_PAGESIZE : (int) total / ESConstant.PRODUCT_PAGESIZE + 1;
@@ -127,11 +125,27 @@ public class MallSearchServiceImpl implements MallSearchService {
         ParsedNested attrNested = result.getAggregations().get("attrNested");
         ParsedLongTerms attrIdAggs = attrNested.getAggregations().get("attr_id_aggs");
         List<? extends Terms.Bucket> buckets = attrIdAggs.getBuckets();
+        List<GuliMallSearchResponse.Attrs> attrsList = new ArrayList<>();
         for (Terms.Bucket bucket : buckets) {
+            //属性的id
             long attrId = bucket.getKeyAsNumber().longValue();
+            ParsedStringTerms attrNameAggs = bucket.getAggregations().get("attr_name_aggs");
+            String attrName = attrNameAggs.getBuckets().get(0).getKeyAsString();
             ParsedStringTerms attrValueAggs = bucket.getAggregations().get("attr_value_aggs");
+            List<String> attrValueList = new ArrayList<>();
+            List<? extends Terms.Bucket> attrValueBucktes = attrValueAggs.getBuckets();
+            for (Terms.Bucket attrValueBuckte : attrValueBucktes) {
+                attrValueList.add(attrValueBuckte.getKeyAsString());
+            }
+            GuliMallSearchResponse.Attrs attrs = GuliMallSearchResponse.Attrs.builder()
+                    .attrId(attrId)
+                    .attrName(attrName)
+                    .attrValue(attrValueList)
+                    .build();
+            attrsList.add(attrs);
         }
-        return null;
+        response.setAttrs(attrsList);
+        return response;
     }
 
     /**
@@ -148,7 +162,7 @@ public class MallSearchServiceImpl implements MallSearchService {
             builder.query(queryBuilder.must(QueryBuilders.matchQuery("skuTitle", searchParam.getKeyword())));
             //高亮
             HighlightBuilder highlightBuilder = new HighlightBuilder();
-            highlightBuilder.field(searchParam.getKeyword());
+            highlightBuilder.field("skuTitle");
             highlightBuilder.preTags("<b style='color:red'>");
             highlightBuilder.postTags("</b>");
             builder.highlighter(highlightBuilder);
@@ -184,8 +198,10 @@ public class MallSearchServiceImpl implements MallSearchService {
             builder.sort(sort[0], StringUtils.equalsIgnoreCase("desc", sort[1]) ? SortOrder.DESC : SortOrder.ASC);
         }
         //分页
-        builder.from((searchParam.getPageNum() - 1) * ESConstant.PRODUCT_PAGESIZE);
-        builder.size(ESConstant.PRODUCT_PAGESIZE);
+        if (Objects.nonNull(searchParam.getPageNum())) {
+            builder.from((searchParam.getPageNum() - 1) * ESConstant.PRODUCT_PAGESIZE);
+            builder.size(ESConstant.PRODUCT_PAGESIZE);
+        }
 
         //聚合分析
         //品牌聚合
@@ -207,7 +223,6 @@ public class MallSearchServiceImpl implements MallSearchService {
         attrAgg.subAggregation(attrIdAgg);
         builder.aggregation(attrAgg);
         SearchRequest request = new SearchRequest(new String[]{ESConstant.PRODUCT_INDEX}, builder);
-        System.out.println(request);
         return request;
     }
 }
