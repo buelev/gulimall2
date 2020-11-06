@@ -120,8 +120,18 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
          * 查询每个属性分组下的属性名称
          * 查询每个属性名称的属性值
          */
-        List<SkuItemVO.SpuSaleAttrGroupVo> skuItemSaleAttrVos = this.baseMapper.querySpuSaleAttrGroupVO(spuId, skuInfoEntity.getCatalogId());
-        return null;
+        List<SkuItemVO.SpuSaleAttrGroupVo> spuSaleGroup = this.baseMapper.querySpuSaleAttrGroupVO(spuId, skuInfoEntity.getCatalogId());
+        /**
+         * 查询spu的销售属性
+         */
+        List<SkuItemVO.SkuItemSaleAttrVo> spuSaleAttr = this.baseMapper.selectSpuItemSaleAttr(spuId);
+        return SkuItemVO.builder()
+                .skuInfoEntity(skuInfoEntity)
+                .skuImagesEntity(skuImagesEntityList)
+                .spuInfoDescEntity(spuInfoDescEntity)
+                .spuSaleAttrGroupVo(spuSaleGroup)
+                .skuItemSaleAttrVo(spuSaleAttr)
+                .build();
     }
 
 }

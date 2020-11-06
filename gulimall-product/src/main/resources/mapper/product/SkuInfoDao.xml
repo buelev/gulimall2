@@ -36,6 +36,21 @@
             left join pms_product_attr_value c on b.attr_id = c.attr_id
         where a.catelog_id = #{catalogId} and c.spu_id = #{spuId};
     </select>
+    <resultMap id="spuSaleAttr" type="com.atguigu.gulimall.product.vo.SkuItemVO$SkuItemSaleAttrVo">
+        <result property="attrId" column="attr_id"/>
+        <result property="attrName" column="attr_name"/>
+        <result property="attrValue" column="attr_value"/>
+    </resultMap>
+    <select id="selectSpuItemSaleAttr" resultMap="spuSaleAttr">
+        select
+            ssav.attr_id,
+            ssav.attr_name,
+            GROUP_CONCAT(DISTINCT ssav.attr_value) attr_value
+            from pms_sku_info info
+            LEFT JOIN pms_sku_sale_attr_value ssav on info.sku_id = ssav.sku_id
+            where info.spu_id = #{spuId}
+        group by ssav.attr_id,ssav.attr_name
+    </select>
 
 
 </mapper>

@@ -63,4 +63,10 @@ public class GulimallProductApplicationTests {
         List<SkuItemVO.SpuSaleAttrGroupVo> vos = skuInfoDao.querySpuSaleAttrGroupVO(13l, 225l);
         System.out.println(JSON.toJSONString(vos));
     }
+
+    @Test
+    public void testSkuSaleAttrValue() {
+        List<SkuItemVO.SkuItemSaleAttrVo> attrVos = skuInfoDao.selectSpuItemSaleAttr(13l);
+        System.out.println(JSON.toJSONString(attrVos));
+    }
 }

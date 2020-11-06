@@ -32,9 +32,9 @@ public class SkuItemVO {
     @Builder
     @ToString
     public static class SkuItemSaleAttrVo {
-        private Long spuId;
-        private String spuName;
-        private List<String> spuValue;
+        private Long attrId;
+        private String attrName;
+        private String AttrValue;
     }
 
     @Data

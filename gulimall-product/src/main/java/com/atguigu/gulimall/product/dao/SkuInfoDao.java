@@ -19,4 +19,11 @@ import java.util.List;
 public interface SkuInfoDao extends BaseMapper<SkuInfoEntity> {
 
     List<SkuItemVO.SpuSaleAttrGroupVo> querySpuSaleAttrGroupVO(@Param("spuId") Long spuId, @Param("catalogId") Long catalogId);
+
+    /**
+     * 查询销售属性
+     * @param spuId
+     * @return
+     */
+    List<SkuItemVO.SkuItemSaleAttrVo> selectSpuItemSaleAttr(@Param("spuId") Long spuId);
 }
